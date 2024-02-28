@@ -5,12 +5,7 @@ const provider = new ethers.providers.JsonRpcProvider(
   `https://sepolia.infura.io/v3/76e8fe6f57c848819f79f2c4540f43d1`
 );
 
-const privateKey =
-  "0fd84f5217ada1ba1f7e08899e9eff42051730cffea86477a94a1436161321ab";
-
-const byteCode = fs.readFileSync("./simpleStorage_sol_SimpleStorage.bin");
-
-const walletAddress = "0xc861354747099cd2D07512FAe3868e7D05677b07";
+const walletAddress = "0x6c8111485775c57c216cc76cf1e1455e65adeb29";
 
 const walletAbi = [
   {
@@ -106,28 +101,32 @@ const walletAbi = [
   },
 ];
 
-async function deployContract() {
-  const wallet = new ethers.Wallet(privateKey, provider);
-  const contractFactory = new ethers.ContractFactory(
-    walletAbi,
-    byteCode,
-    wallet
-  );
-  const deployedContract = await contractFactory.deploy();
-  await deployedContract.deployed(); // Wait for deployment to be confirmed
-  console.log("Contract deployed at address:", deployedContract.address);
-  return deployedContract;
-}
+// provider can help you access read function of contract ....
 
 async function contractInteraction() {
-  const deployedContract = await deployContract();
   const walletContract = new ethers.Contract(
-    deployedContract.address,
+    walletAddress,
     walletAbi,
     provider
   );
   const contractName = await walletContract.name();
   console.log("Contract name:", contractName);
+
+  const num = await walletContract.getValue();
+  console.log("number :", String(num));
+
+  const balance = await walletContract.contractBalance();
+  const fbalance = ethers.utils.formatEther(balance);
+  console.log("contract balance:-", fbalance);
+
+  // const userBalance = await walletContract.accountBalance(
+  //   " 0xc861354747099cd2d07512fae3868e7d05677b07"
+  // );
+
+  // console.log("user balance:", userBalance);
 }
 
 contractInteraction().catch(console.error);
+
+// smartcontract address = 0x6c8111485775c57c216cc76cf1e1455e65adeb29
+// my address = 0xc861354747099cd2D07512FAe3868e7D05677b07
