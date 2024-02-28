@@ -1,8 +1,8 @@
 import { ethers } from "ethers";
 import "./App.css";
-
+require("dotenv").config();
 function App() {
-  const walletAddress = "0x6c8111485775c57c216cc76cf1e1455e65adeb29";
+  const walletAddress = process.env.WALLET_ADRESS;
   const walletAbi = [
     {
       inputs: [
@@ -104,10 +104,13 @@ function App() {
       const contract = new ethers.Contract(walletAddress, walletAbi, signer);
       // await contract.setValue(2);
       //await contract.sendEthContract({ value: ethers.utils.parseEther("0.1") });
-      await contract.sendEthUser("0x11aa79c34BD4D74AF2f7db48D0A5f85Ad4E99E72", { //acount address u want to send eth to.
+      await contract.sendEthUser(process.env.ACCOUNT_ADRESS, {
+        //acount address u want to send eth to.
         value: ethers.utils.parseEther("0.1"),
       });
     };
+    console.log(process.env.WALLET_ADRESS);
+    console.log(process.env.ACCOUNT_ADRESS);
     writeContract();
   }, []);
 
